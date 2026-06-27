@@ -237,6 +237,7 @@ class Task_Frame(ttk.Frame):
                 from_=1,
                 to=5,
                 orient="horizontal",
+                length=180
             )
             self.task_diff_slider_input.pack(pady=5)
             self.task_diff_slider_input.place(x=1050, y=715)
@@ -301,50 +302,34 @@ def WINDOW_CREATION():
     )
     Title_Label.pack()
 
-    Descriptor_Label_Title = tk.Label(
-        window,
-        text="TASK TITLE",
-        font=("Roboto"),
-        padx=20, pady=20,
-        width=20,
-        fg="#ffffff", bg="#263B74",
-        relief="raised"
-    )
-    Descriptor_Label_Desc = tk.Label(
-        window,
-        text="DESCRIPTION",
-        font=("Roboto"),
-        padx=20, pady=20,
-        width=23,
-        fg="#ffffff", bg="#263B74",
-        relief="raised"
-    )
-    Descriptor_Label_Deadline = tk.Label(
-        window,
-        text="DEADLINE",
-        font=("Roboto"),
-        padx=20, pady=20,
-        fg="#ffffff", bg="#263B74",
-        width=12,
-        relief="raised"
-    )
-    Descriptor_Label_Diff = tk.Label(
-        window,
-        text="DIFFICULTY (CAT)",
-        font=("Roboto"),
-        padx=20, pady=20,
-        fg="#ffffff", bg="#263B74",
-        width=15,
-        relief="raised"
-    )
+    # header frame
+    header_frame = ttk.Frame(window, style="task.TFrame")
+    header_frame.place(x=880, y=160)
 
-    Descriptor_Label_Title.place(x=1050,y=140)
-    Descriptor_Label_Desc.place(x=1274,y=140)
-    Descriptor_Label_Deadline.place(x=1506,y=140)
-    Descriptor_Label_Diff.place(x=1657,y=140)
+    header_frame.columnconfigure(0, weight=0, minsize=180)   # task ID / buttons
+    header_frame.columnconfigure(1, weight=1, minsize=240)  # task title
+    header_frame.columnconfigure(2, weight=1, minsize=230)  # description
+    header_frame.columnconfigure(3, weight=1, minsize=150)  # deadline
+    header_frame.columnconfigure(4, weight=1, minsize=200)  # difficulty
+
+    # header labels
+    header_title = ttk.Label(header_frame, text="TASK TITLE", style="TLabel",
+                             font=("Roboto", 20), background="#263B74", foreground="#ffffff", anchor="center")
+    header_desc = ttk.Label(header_frame, text="DESCRIPTION", style="TLabel",
+                            font=("Roboto", 20), background="#263B74", foreground="#ffffff", anchor="center")
+    header_deadline = ttk.Label(header_frame, text="DEADLINE", style="TLabel",
+                                font=("Roboto", 20), background="#263B74", foreground="#ffffff", anchor="center")
+    header_diff = ttk.Label(header_frame, text="DIFFICULTY", style="TLabel",
+                            font=("Roboto", 20), background="#263B74", foreground="#ffffff", anchor="center")
+
+    header_title.grid(row=0, column=1, padx=2, pady=2, sticky="ew")
+    header_desc.grid(row=0, column=2, padx=2, pady=2, sticky="ew")
+    header_deadline.grid(row=0, column=3, padx=2, pady=2, sticky="ew")
+    header_diff.grid(row=0, column=4, padx=2, pady=2, sticky="ew")
+
 
     # sanity bar backdrop
-    sanity_backdrop = tk.Frame(window, background="#263B74", width=900, height=150)
+    sanity_backdrop = tk.Frame(window, background="#263B74", width=850, height=150)
     sanity_backdrop.pack_propagate(False)
     sanity_backdrop.place(x=10, y=700)
 
@@ -357,16 +342,16 @@ def WINDOW_CREATION():
     )
     sanity_text.pack(anchor="nw", padx=10)
 
-    box_in_sanity_1 = tk.Frame(sanity_backdrop, bg="#ffffff", width=900, height=100)
+    box_in_sanity_1 = tk.Frame(sanity_backdrop, bg="#ffffff", width=850, height=100)
     box_in_sanity_1.pack_propagate(False)
     box_in_sanity_1.pack(anchor="nw", padx=10, pady=15)
 
-    box_in_sanity_2 = tk.Frame(box_in_sanity_1, bg="#1a1c2e", width=900, height=100)
+    box_in_sanity_2 = tk.Frame(box_in_sanity_1, bg="#1a1c2e", width=850, height=100)
     box_in_sanity_2.pack_propagate(False)
     box_in_sanity_2.pack(padx=3, pady=3)
 
-    sanity_bar = tk.Frame(box_in_sanity_2, bg="#19ff4b", height=100, width=900)
-    sanity_bar.place(x=0, y=0, height=100, width=900)
+    sanity_bar = tk.Frame(box_in_sanity_2, bg="#19ff4b", height=100, width=850)
+    sanity_bar.place(x=0, y=0, height=100, width=850)
 
     sanity_percent = tk.Label(
         box_in_sanity_2,
@@ -379,11 +364,11 @@ def WINDOW_CREATION():
     
 
     # coins box
-    coins_backdrop = tk.Frame(window, background="#263B74", width=450, height=110)
+    coins_backdrop = tk.Frame(window, background="#263B74", width=400, height=110)
     coins_backdrop.pack_propagate(False)
     coins_backdrop.place(x=10, y=860)
 
-    coins_inner = tk.Frame(coins_backdrop, background="#1a1c2e", width=450, height=60)
+    coins_inner = tk.Frame(coins_backdrop, background="#1a1c2e", width=400, height=60)
     coins_inner.pack(fill="both", expand=True,padx=10, pady=10)
 
     coin_icon = tk.PhotoImage(file="coin.png")
@@ -394,7 +379,7 @@ def WINDOW_CREATION():
     coins_text = tk.Label(
         coins_inner,
         text=f"COINS: {coins}",
-        font=("Roboto", 40, "bold"),
+        font=("Roboto", 35, "bold"),
         fg="#ffffff", bg="#1a1c2e"
     )
     coins_text.pack(side="right", padx=10)
@@ -420,9 +405,9 @@ def WINDOW_CREATION():
     # time + countdown
     time_backdrop = tk.Frame(window, background="#263B74", width=440, height=110)
     time_backdrop.pack_propagate(False)
-    time_backdrop.place(x=470, y=860)  # right of coin box (coin box at x=10, width=450)
+    time_backdrop.place(x=420, y=860)  # right of coin box (coin box at x=10, width=450)
 
-    time_inner = tk.Frame(time_backdrop, background="#1a1c2e", width=440, height=110)
+    time_inner = tk.Frame(time_backdrop, background="#1a1c2e", width=390, height=110)
     time_inner.pack(fill="both", expand=True, padx=10, pady=10)
 
     current_time_label = tk.Label(
