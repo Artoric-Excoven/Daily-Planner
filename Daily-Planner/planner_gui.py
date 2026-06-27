@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import math
 import time
+import datetime
 import threading
 import re
 import queue
@@ -375,6 +376,7 @@ def WINDOW_CREATION():
         padx=20, pady=20
     )
     sanity_percent.place(relx=0.5, rely=0.5, anchor="center")
+    
 
     # coins box
     coins_backdrop = tk.Frame(window, background="#263B74", width=450, height=110)
@@ -396,6 +398,83 @@ def WINDOW_CREATION():
         fg="#ffffff", bg="#1a1c2e"
     )
     coins_text.pack(side="right", padx=10)
+
+    # char images
+    try:
+        high_img = tk.PhotoImage(file="high_san.png")
+        mid_img = tk.PhotoImage(file="mid_san.png")
+        low_img = tk.PhotoImage(file="low_san.png")
+        print("Images loaded successfully")
+    except Exception as e:
+        print("Image load error:", e)
+
+    window.update_idletasks()
+    san_img_frame = tk.Frame(window, background="#1a1c2e")
+    san_img_frame.place(x=10, y=50,
+                        width=sanity_backdrop.winfo_x() + sanity_backdrop.winfo_width()-10,
+                        height=sanity_backdrop.winfo_y() - 50)
+
+    san_img_label = tk.Label(san_img_frame, bg="#1a1c2e")
+    san_img_label.place(relx=0.5, rely=0.5, anchor="center")
+    
+    # time + countdown
+    time_backdrop = tk.Frame(window, background="#263B74", width=440, height=110)
+    time_backdrop.pack_propagate(False)
+    time_backdrop.place(x=470, y=860)  # right of coin box (coin box at x=10, width=450)
+
+    time_inner = tk.Frame(time_backdrop, background="#1a1c2e", width=440, height=110)
+    time_inner.pack(fill="both", expand=True, padx=10, pady=10)
+
+    current_time_label = tk.Label(
+        time_inner,
+        text="--:--:--",
+        font=("Roboto", 30, "bold"),
+        fg="#ffffff", bg="#1a1c2e"
+    )
+    current_time_label.pack(anchor="n")
+
+    countdown_label = tk.Label(
+        time_inner,
+        text="24h:00m:00s",
+        font=("Roboto", 25, "bold"),
+        fg="#ffffff", bg="#1a1c2e"
+    )
+    countdown_label.pack(anchor="s", pady=5)
+
+
+    def update_time_and_countdown():
+        # current time
+        now = datetime.datetime.now()
+        current_time_label.config(text=now.strftime("%H:%M:%S"))
+
+        # seconds till midnight
+        tomorrow = now.replace(hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(days=1)
+        delta = tomorrow - now
+        hours, remainder = divmod(delta.seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+
+        countdown_label.config(text=f"{hours:02d}h:{minutes:02d}m:{seconds:02d}s")
+
+        window.after(1000, update_time_and_countdown)
+
+    update_time_and_countdown()
+
+
+    def update_san_img():
+        global sanity
+        if sanity >= 67:
+            san_img_label.config(image=high_img)
+            san_img_label.image = high_img
+        elif sanity >= 33:
+            san_img_label.config(image=mid_img)
+            san_img_label.image = mid_img
+        else:
+            san_img_label.config(image=low_img)
+            san_img_label.image = low_img
+        window.after(200, update_san_img)
+
+    update_san_img()
+
 
     def update_coins():
         global coins
